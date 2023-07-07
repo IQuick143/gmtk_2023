@@ -1,5 +1,7 @@
 use bevy::prelude::*;
+use crate::logic::GamePiece;
 use crate::logic::PieceType;
+use crate::logic::Player;
 use crate::prelude::*;
 
 use super::TILE_SIZE;
@@ -28,7 +30,7 @@ pub struct Tile {
 pub struct Piece {
 	pub x: u32,
 	pub y: u32,
-	pub piece_type: PieceType,
+	pub displayed_piece: GamePiece,
 	pub tile: Entity,
 }
 
@@ -60,27 +62,39 @@ fn update_board(
 			continue;
 		}
 		if piece.is_none() && game_piece.is_some() {
+			let game_piece = *game_piece.unwrap();
+			let is_black = game_piece.player == Player::Black;
 			let piece_entity =
 			commands.spawn((
 				SpriteBundle {
-			        sprite: Sprite {custom_size: Some(Vec2::ONE * TILE_SIZE), anchor: bevy::sprite::Anchor::Center, ..default()},
+			        sprite: Sprite {custom_size: Some(Vec2::ONE * TILE_SIZE), anchor: bevy::sprite::Anchor::Center, flip_y: is_black, color: get_player_colour(game_piece.player), ..default()},
 					transform: Transform::from_translation(Vec2::ZERO.extend(1.0)),
-					texture: asset_server.load(get_texture(game_piece.unwrap().piece_type)),
+					texture: asset_server.load(get_texture(game_piece.piece_type)),
 					..default()
 				},
-				Piece {x: tile.x, y: tile.y, piece_type: game_piece.unwrap().piece_type, tile: tile_entity}
+				Piece {x: tile.x, y: tile.y, displayed_piece: game_piece, tile: tile_entity}
 			)).set_parent(tile_entity)
 			.id();
 			tile.piece = Some(piece_entity);
 			continue;
 		}
 		if piece.is_some() && game_piece.is_some() {
+			let game_piece = *game_piece.unwrap();
 			let (piece_entity, mut piece) = piece.unwrap();
-			if piece.piece_type != game_piece.unwrap().piece_type {
-				piece.piece_type = game_piece.unwrap().piece_type;
+			if piece.displayed_piece.piece_type != game_piece.piece_type {
+				piece.displayed_piece.piece_type = game_piece.piece_type;
 				// Override the texture
 				commands.entity(piece_entity)
-				.insert(asset_server.load::<Image, &str>(get_texture(game_piece.unwrap().piece_type)));
+				.insert(asset_server.load::<Image, &str>(get_texture(game_piece.piece_type)));
+			}
+			if piece.displayed_piece.player != game_piece.player {
+				piece.displayed_piece.player = game_piece.player;
+				// Override the sprite
+				commands.entity(piece_entity)
+				.insert(Sprite {
+					custom_size: Some(Vec2::ONE * TILE_SIZE), anchor: bevy::sprite::Anchor::Center,
+					flip_y: game_piece.player == Player::Black, color: get_player_colour(game_piece.player), ..default()
+				});
 			}
 		}
 	}
@@ -107,6 +121,13 @@ pub fn spawn_tile(
 pub fn get_texture(kind: PieceType) -> &'static str {
 	match kind {
 		PieceType::Pawn => "images/pieces/pawn.png",
+	}
+}
+
+pub fn get_player_colour(player: Player) -> Color {
+	match player {
+		Player::Black => Color::BLACK,
+		Player::White => Color::WHITE,
 	}
 }
 

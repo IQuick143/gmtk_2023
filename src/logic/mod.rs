@@ -4,6 +4,11 @@ mod pieces;
 
 pub use pieces::*;
 
+#[derive(PartialEq, Eq, Clone, Copy)]
+pub enum Player {
+	Black, White
+}
+
 #[derive(Resource)]
 pub struct GameBoard {
 	pub size: UVec2,
@@ -14,7 +19,7 @@ impl GameBoard {
 	pub fn new(x: u32, y: u32) -> Self {
 		GameBoard {
 			size: UVec2::new(x, y),
-			pieces: (0..x*y).map(|n| if n % 5 == 1 {Some(GamePiece { piece_type: PieceType::Pawn })} else {None}).collect()
+			pieces: Vec::new(),
 		}
 	}
 
@@ -42,5 +47,9 @@ fn update_board(
 	mut board: ResMut<GameBoard>,
 	time: Res<Time>,
 ) {
-	board.pieces = (0..board.size.x*board.size.y).map(|n| if (n + ((time.elapsed_seconds() * 50.0) as u32)) % 64 == 0 {Some(GamePiece { piece_type: PieceType::Pawn })} else {None}).collect()
+	board.pieces = (0..board.size.x*board.size.y).map(
+		|n| if (n + ((time.elapsed_seconds() * 50.0) as u32)) % 5 == 0 {Some(GamePiece {
+			player: if n > 31 {Player::Black} else {Player::White},
+			piece_type: PieceType::Pawn,
+	})} else {None}).collect()
 }
