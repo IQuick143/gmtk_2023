@@ -5,12 +5,12 @@ pub const CAMERA_HEIGHT: f32 = 10.0;
 // Size of one tile 
 pub const TILE_SIZE: f32 = 1.0;
 
-mod mouse;
-mod camera;
-mod board;
+pub mod mouse;
+pub mod camera;
+pub mod board;
 
 mod colours {
-    use bevy::prelude::*;
+	use bevy::prelude::*;
 
 	pub const TILE_LIGHT: Color = Color::BEIGE;
 	pub const TILE_DARK: Color = Color::DARK_GRAY;
@@ -23,6 +23,7 @@ impl Plugin for UIPlugin {
 		app
 		.add_plugin(camera::CameraPlugin)
 		.add_plugin(board::BoardPlugin)
+		.add_plugin(mouse::MousePlugin)
 		;
 	}
 }
