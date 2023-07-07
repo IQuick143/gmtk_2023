@@ -1,11 +1,15 @@
 use bevy::prelude::*;
 
-pub mod prelude {
-	// pub use
-}
-
 // Modules
+mod common;
+mod logic;
 mod debug;
+mod ui;
+
+pub mod prelude {
+	pub use crate::logic::GameBoard;
+	pub use crate::common::*;
+}
 
 fn main() {
 	let default_plugins = DefaultPlugins;
@@ -26,11 +30,16 @@ fn main() {
 	let mut app = App::new();
 
 	app
+	.add_state::<common::GameState>()
 	.add_plugins(default_plugins)
+	.add_plugin(logic::LogicPlugin)
+	.add_plugin(ui::UIPlugin)
 	;
 
 	{
 		#[cfg(debug_assertions)]
 		app.add_plugin(debug::DebugPlugin);
 	}
+
+	app.run();
 }
