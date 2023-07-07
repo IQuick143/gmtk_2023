@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 use super::super::TILE_SIZE;
+use super::super::colours::TILE_LIGHT;
+use super::super::colours::TILE_DARK;
 
 #[derive(Component, Clone, Copy)]
 pub struct Tile {
@@ -14,8 +16,8 @@ pub fn spawn_tile(
 ) -> Entity {
 	commands.spawn((SpriteBundle {
 		sprite: Sprite {
-		//	color: (), 
-			custom_size: Some(Vec2::ONE * 0.95 * TILE_SIZE ), anchor: bevy::sprite::Anchor::Center,
+			color: if (x + y) % 2 == 0 {TILE_LIGHT} else {TILE_DARK},
+			custom_size: Some(Vec2::ONE * TILE_SIZE), anchor: bevy::sprite::Anchor::Center,
 			..default()
 		},
 		transform: Transform::from_translation(offset),

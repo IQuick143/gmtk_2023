@@ -9,6 +9,13 @@ mod mouse;
 mod camera;
 mod board;
 
+mod colours {
+    use bevy::prelude::*;
+
+	pub const TILE_LIGHT: Color = Color::BEIGE;
+	pub const TILE_DARK: Color = Color::DARK_GRAY;
+}
+
 pub struct UIPlugin;
 
 impl Plugin for UIPlugin {
