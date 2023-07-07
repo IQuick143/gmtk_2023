@@ -24,7 +24,7 @@ fn setup_camera(
 			scaling_mode: bevy::render::camera::ScalingMode::FixedVertical(super::CAMERA_HEIGHT),
 			..default()
 		},
-		transform: Transform::from_translation(Vec3::new(0.0,0.0,0.0)),
+		transform: Transform::from_translation(Vec3::new(0.0,0.0,100.0)),
 //		camera_2d: todo!(),
 		..Default::default()
 	}, MainCamera));

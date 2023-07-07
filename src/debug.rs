@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{prelude::*, ui::mouse::{WorldMouse, TileMouse}};
+use crate::ui::mouse::{WorldMouse, TileMouse};
 
 pub struct DebugPlugin;
 
